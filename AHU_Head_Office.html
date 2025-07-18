@@ -2,62 +2,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AHU Head Office</title>
-    <meta charset="UTF-8">
-    <style>
-        body { font-family: Arial; text-align: center; }
-        h1 { font-size: 3em; margin-bottom: 0.2em; }
-        #clock { font-size: 2.5em; color: black; }
-        .code { font-size: 2.5em; color: green; margin-top: 0.3em; }
-        .info { font-size: 1.5em; margin-top: 0.3em; }
-    </style>
+<meta charset="UTF-8">
+<title>AHU Head Office</title>
+<style>
+body { text-align: center; font-family: Arial, sans-serif; margin-top: 50px; }
+h1 { font-size: 3em; }
+h2 { font-size: 2.5em; }
+.code { font-size: 2.5em; color: green; }
+</style>
 </head>
 <body>
-    <h1>AHU Head Office</h1>
-    <div id="clock"></div>
-    <div class="info">Your Location: <span id="yourLocation">...</span></div>
-    <div class="info">QR Position: 32°9'54.21''N, 81°26'50.01''W</div>
-    <div class="info">Distance: <span id="distance">...</span> ft</div>
-    <div class="info">Authorized? <span id="authStatus">No</span></div>
-    <div class="code" id="codeSecret" style="display: none;">RR23</div>
+<h1>AHU Head Office</h1>
+<h2>19:26</h2>
+<p>Your Location: 32.165088, -81.457354</p>
+<p>QR Position: 32°9'54.21''N, 81°26'50.01''W</p>
+<p>Distance: 3128.1 ft</p>
+<p>Authorized? No</p>
 
-    <script>
-        function updateClock() {
-            const now = new Date();
-            const hh = String(now.getHours()).padStart(2, '0');
-            const mm = String(now.getMinutes()).padStart(2, '0');
-            document.getElementById("clock").innerText = hh + ":" + mm;
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
-
-        function toRadians(deg) { return deg * Math.PI / 180; }
-        function calcDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371e3;
-            const φ1 = toRadians(lat1), φ2 = toRadians(lat2);
-            const Δφ = toRadians(lat2 - lat1);
-            const Δλ = toRadians(lon2 - lon1);
-            const a = Math.sin(Δφ/2)**2 + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)**2;
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c * 3.28084;
-        }
-
-        navigator.geolocation.getCurrentPosition(function(pos) {
-            const lat = pos.coords.latitude;
-            const lon = pos.coords.longitude;
-            const targetLat = 32.1650583;
-            const targetLon = -81.447225;
-            const dist = calcDistance(lat, lon, targetLat, targetLon);
-            document.getElementById("yourLocation").innerText = lat.toFixed(6) + ", " + lon.toFixed(6);
-            document.getElementById("distance").innerText = dist.toFixed(1);
-            if (dist <= 60) {
-                document.getElementById("authStatus").innerText = "Yes";
-                document.getElementById("codeSecret").style.display = "block";
-            } else {
-                document.getElementById("authStatus").innerText = "No";
-                document.getElementById("codeSecret").style.display = "none";
-            }
-        });
-    </script>
 </body>
 </html>
+    
