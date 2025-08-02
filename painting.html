@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Painting</title>
+  <meta charset="UTF-8">
+  <style>
+    body { text-align: center; font-family: Arial, sans-serif; }
+    h1 { font-size: 3em; }
+    #clock { font-size: 2.5em; margin: 10px; }
+    #secret-code { font-size: 2.5em; color: green; display: none; }
+    .info { font-size: 1.2em; margin: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Painting</h1>
+  <div id="clock">--:--:--</div>
+  <div class="info">Your Location: <span id="your-location">Loading...</span></div>
+  <div class="info">QR Position: 32° 10' 2.12''N, 81° 27' 9.84''W</div>
+  <div class="info">Distance: <span id="distance">--</span> feet</div>
+  <div class="info">Authorized? <span id="auth">No</span></div>
+  <div id="secret-code">DC375</div>
+
+<script>
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString();
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+const latQR = 32.167256;
+const lonQR = -81.452733;
+const authRadius = 60;
+
+function toRadians(deg) {
+  return deg * (Math.PI / 180);
+}
+
+function computeDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371e3;
+  const φ1 = toRadians(lat1), φ2 = toRadians(lat2);
+  const Δφ = toRadians(lat2 - lat1);
+  const Δλ = toRadians(lon2 - lon1);
+  const a = Math.sin(Δφ/2)**2 + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)**2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c * 3.28084; // feet
+}
+
+navigator.geolocation.watchPosition(pos => {
+  const lat = pos.coords.latitude;
+  const lon = pos.coords.longitude;
+  document.getElementById('your-location').textContent = `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+  const dist = computeDistance(latQR, lonQR, lat, lon);
+  document.getElementById('distance').textContent = dist.toFixed(1);
+  if (dist <= authRadius) {
+    document.getElementById('auth').textContent = "Yes";
+    document.getElementById('secret-code').style.display = "block";
+  } else {
+    document.getElementById('auth').textContent = "No";
+    document.getElementById('secret-code').style.display = "none";
+  }
+});
+</script>
+</body>
+</html>
